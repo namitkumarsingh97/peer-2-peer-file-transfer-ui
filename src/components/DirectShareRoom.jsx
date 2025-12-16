@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useLocation } from 'react-router-dom'
 import { io } from 'socket.io-client'
 import { useDirectShare } from '../hooks/useDirectShare'
@@ -30,6 +30,14 @@ const DirectShareRoom = () => {
     handleDownloadAnswer,
     handleIceCandidate
   } = useDirectShare(socket)
+
+  // Define handleJoinShare before it's used in useEffect
+  const handleJoinShare = useCallback((fileId) => {
+    // Request file info and connect to seeder
+    if (socket && socket.connected) {
+      socket.emit('file-download-connect', { fileId })
+    }
+  }, [socket])
 
   useEffect(() => {
     // Use environment variable or default to production backend
@@ -108,13 +116,6 @@ const DirectShareRoom = () => {
       await downloadFile(fileInfo)
     } catch (error) {
       setError(error.message || 'Failed to download file')
-    }
-  }
-
-  const handleJoinShare = (fileId) => {
-    // Request file info and connect to seeder
-    if (socket && socket.connected) {
-      socket.emit('file-download-connect', { fileId })
     }
   }
 

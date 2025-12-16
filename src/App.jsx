@@ -1,18 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useParams, useNavigate } from 'react-router-dom'
 import DirectShareRoom from './components/DirectShareRoom'
-import { parseShareLink } from './utils/shareLink'
 import './App.css'
 
 // Component to handle download route
 const DownloadPage = () => {
   const { fileId } = useParams()
   const navigate = useNavigate()
-  const [status, setStatus] = useState('connecting')
 
   useEffect(() => {
     if (fileId) {
-      // Redirect to main app with fileId in state or URL hash
+      // Redirect to main app with fileId in state
       // The DirectShareRoom will handle the download
       navigate('/', { 
         state: { fileId },
