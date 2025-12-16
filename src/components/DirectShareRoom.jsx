@@ -14,10 +14,18 @@ const DirectShareRoom = () => {
   const fileInputRef = useRef(null)
   
   // Check if fileId is in URL or location state
-  const initialFileId = location.state?.fileId || 
-    (location.pathname.startsWith('/download/') 
-      ? location.pathname.split('/download/')[1] 
-      : null)
+  // Handle both /download/:fileId and direct fileId in pathname
+  const getFileIdFromPath = () => {
+    const path = location.pathname
+    // Match /download/:fileId pattern
+    const downloadMatch = path.match(/^\/download\/(.+)$/)
+    if (downloadMatch) {
+      return downloadMatch[1]
+    }
+    return null
+  }
+  
+  const initialFileId = location.state?.fileId || getFileIdFromPath()
 
   const {
     sharedFiles,
