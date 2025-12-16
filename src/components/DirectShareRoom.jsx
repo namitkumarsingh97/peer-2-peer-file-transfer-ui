@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { io } from 'socket.io-client'
 import { useDirectShare } from '../hooks/useDirectShare'
 import FileSharePanel from './FileSharePanel'
@@ -7,9 +8,16 @@ import ShareLinkInput from './ShareLinkInput'
 import { parseShareLink } from '../utils/shareLink'
 
 const DirectShareRoom = () => {
+  const location = useLocation()
   const [socket, setSocket] = useState(null)
   const [error, setError] = useState('')
   const fileInputRef = useRef(null)
+  
+  // Check if fileId is in URL or location state
+  const initialFileId = location.state?.fileId || 
+    (location.pathname.startsWith('/download/') 
+      ? location.pathname.split('/download/')[1] 
+      : null)
 
   const {
     sharedFiles,
@@ -75,6 +83,17 @@ const DirectShareRoom = () => {
       }
     }
   }, [handleDownloadRequest, handleDownloadAnswer, handleIceCandidate])
+
+  // Auto-join share if fileId is in URL
+  useEffect(() => {
+    if (initialFileId && socket && socket.connected) {
+      // Small delay to ensure socket is fully ready
+      const timer = setTimeout(() => {
+        handleJoinShare(initialFileId)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [initialFileId, socket, handleJoinShare])
 
   const handleShareFile = async (file, fileId, onProgress) => {
     try {

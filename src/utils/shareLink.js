@@ -4,6 +4,7 @@
  */
 
 export const generateShareLink = (fileId) => {
+  // Use current origin (works for both localhost and production)
   const baseUrl = window.location.origin
   return `${baseUrl}/download/${fileId}`
 }

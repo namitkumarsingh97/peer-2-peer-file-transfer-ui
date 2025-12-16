@@ -31,7 +31,7 @@ export const useDirectShare = (socket) => {
     const { chunks, metadata } = await chunkFile(file, onProgress)
     
     // Store chunks efficiently - don't keep all in memory for very large files
-    // Instead, store references and read from file when needed
+    // Instead, store only metadata and read from file when needed
     const fileData = {
       fileId,
       file, // Keep original file reference for streaming
@@ -42,10 +42,14 @@ export const useDirectShare = (socket) => {
         fileType: file.type
       },
       chunks: chunks.reduce((acc, chunk) => {
+        // Only store metadata, not the actual chunk data
         acc[chunk.index] = {
-          ...chunk,
-          // For very large files, we'll read from file.slice() when sending
-          // instead of keeping all chunks in memory
+          index: chunk.index,
+          hash: chunk.hash,
+          size: chunk.size,
+          start: chunk.start,
+          end: chunk.end,
+          // Don't store chunk.data - read from file when needed
         }
         return acc
       }, {}),

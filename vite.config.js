@@ -12,6 +12,13 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  // Ensure proper routing for SPA
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
   }
 })
-

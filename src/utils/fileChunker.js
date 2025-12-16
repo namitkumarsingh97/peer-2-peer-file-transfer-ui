@@ -24,7 +24,8 @@ export const chunkFile = async (file, onProgress) => {
   const totalChunks = Math.ceil(file.size / CHUNK_SIZE)
   
   // Process chunks in batches to avoid memory overload
-  const BATCH_SIZE = 10 // Process 10 chunks at a time
+  // Reduced batch size for better memory management
+  const BATCH_SIZE = 5 // Process 5 chunks at a time (reduced from 10)
   
   for (let batchStart = 0; batchStart < totalChunks; batchStart += BATCH_SIZE) {
     const batchEnd = Math.min(batchStart + BATCH_SIZE, totalChunks)
@@ -36,10 +37,11 @@ export const chunkFile = async (file, onProgress) => {
       const chunk = file.slice(start, end)
       
       // Process chunk asynchronously
+      // For very large files, don't store chunk data - we'll read from file when needed
       batchPromises.push(
         hashChunk(chunk).then(hash => ({
           index: i,
-          data: chunk,
+          data: null, // Don't store data in memory for large files
           hash,
           size: chunk.size,
           start,
