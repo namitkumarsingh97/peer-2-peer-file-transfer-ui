@@ -7,8 +7,9 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/socket.io': {
-        target: 'http://localhost:3001',
-        ws: true
+        target: process.env.VITE_SOCKET_URL || 'https://peer-2-peer-file-transfer-api.vercel.app',
+        ws: true,
+        changeOrigin: true
       }
     }
   }

@@ -24,7 +24,9 @@ const DirectShareRoom = () => {
   } = useDirectShare(socket)
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3001')
+    // Use environment variable or default to production backend
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://peer-2-peer-file-transfer-api.vercel.app'
+    const newSocket = io(socketUrl)
 
     newSocket.on('connect', () => {
       console.log('Connected to signaling server')

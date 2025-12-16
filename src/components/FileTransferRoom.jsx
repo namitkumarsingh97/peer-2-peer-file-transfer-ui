@@ -53,7 +53,8 @@ const FileTransferRoom = ({ user, onLogout }) => {
   // Initialize socket connection
   useEffect(() => {
     // Connect to signaling server
-    const newSocket = io('http://localhost:3001', {
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://peer-2-peer-file-transfer-api.vercel.app'
+    const newSocket = io(socketUrl, {
       auth: {
         username: user.username,
         token: 'dummy-token' // In production, use proper JWT
